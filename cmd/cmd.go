@@ -28,6 +28,12 @@ func Execute() {
 		log.Fatal("This program requires root privileges. Please run with sudo.")
 	}
 
+	if sudoUser := os.Getenv("SUDO_USER"); sudoUser != "" {
+		if err := process.AllowX11Access(sudoUser); err != nil {
+			log.Printf("xhost warning: %v", err)
+		}
+	}
+
 	configPath := flag.String("config", "bypass.ini", "Path to config file")
 	directMode := flag.Bool("direct", false, "Direct mode (UDP bypass only, no proxy)")
 	discordPath := flag.String("discord", "", "Path to Discord executable")
@@ -68,7 +74,7 @@ func Execute() {
 	defer cancel()
 
 	// 1. Setup Network Namespace
-	fmt.Print("⚙️  Creating Network Namespace... ")
+	fmt.Print("⚙️ Creating Network Namespace... ")
 	ns, err := netns.Setup()
 	if err != nil {
 		log.Fatalf("Failed: %v", err)
