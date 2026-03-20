@@ -7,21 +7,21 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-type config struct {
+type Config struct {
 	ProxyURL    string
 	DirectMode  bool
 	NFQueueNum  uint16
 	DiscordPath string
 	DiscordArgs []string
 
-	UDPfragmentation bool
+	UDPFragmentation bool
 	FakeTTL          uint8
 }
 
-func Load(path string) (*config, error) {
-	cfg := &config{
+func Load(path string) (*Config, error) {
+	cfg := &Config{
 		NFQueueNum:       1,
-		UDPfragmentation: true,
+		UDPFragmentation: true,
 		FakeTTL:          5,
 		DiscordPath:      constants.DiscordPath,
 	}
@@ -39,7 +39,7 @@ func Load(path string) (*config, error) {
 	cfg.ProxyURL = section.Key("proxy_url").String()
 	cfg.DirectMode = section.Key("direct_mode").MustBool(false)
 	cfg.DiscordPath = section.Key("discord_path").MustString(constants.DiscordPath)
-	cfg.UDPfragmentation = section.Key("udp_fragmentation").MustBool(true)
+	cfg.UDPFragmentation = section.Key("udp_fragmentation").MustBool(true)
 	cfg.FakeTTL = uint8(section.Key("fake_ttl").MustUint(5))
 
 	return cfg, nil
