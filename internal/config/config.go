@@ -3,10 +3,9 @@ package config
 import (
 	"fmt"
 
+	"github.com/MostafaSensei106/Discord-Drover-Linux/internal/constants"
 	"gopkg.in/ini.v1"
 )
-
-const DiscordPath = "/usr/bin/discord"
 
 type config struct {
 	ProxyURL    string
@@ -24,7 +23,7 @@ func Load(path string) (*config, error) {
 		NFQueueNum:       1,
 		UDPfragmentation: true,
 		FakeTTL:          5,
-		DiscordPath:      DiscordPath,
+		DiscordPath:      constants.DiscordPath,
 	}
 
 	if path == "" {
@@ -39,7 +38,7 @@ func Load(path string) (*config, error) {
 	section := iniCfg.Section("bypass")
 	cfg.ProxyURL = section.Key("proxy_url").String()
 	cfg.DirectMode = section.Key("direct_mode").MustBool(false)
-	cfg.DiscordPath = section.Key("discord_path").MustString(DiscordPath)
+	cfg.DiscordPath = section.Key("discord_path").MustString(constants.DiscordPath)
 	cfg.UDPfragmentation = section.Key("udp_fragmentation").MustBool(true)
 	cfg.FakeTTL = uint8(section.Key("fake_ttl").MustUint(5))
 
