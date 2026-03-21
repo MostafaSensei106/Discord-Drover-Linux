@@ -13,7 +13,7 @@ GOARCH ?= $(shell go env GOARCH)
 APP_NAME := ddl
 OUTPUT_DIR := bin/$(GOOS)/$(GOARCH)
 OUTPUT := $(OUTPUT_DIR)/$(APP_NAME)
-GOWEBBASE_VERSION := 1.0.0
+GOWEBBASE_VERSION := 2.0.0
 
 .PHONY: all build clean release help check deps fmt vet
 
@@ -81,8 +81,6 @@ release: check
 			fi; \
 			GOOS=$$GOOS GOARCH=$$GOARCH go build -o $$OUT_FILE . || { echo "❌ Build Failed for $$GOOS/$$GOARCH"; continue; }; \
 			echo "✅ Build done: $$OUT_FILE"; \
-			echo "📂 Copying static files..."; \
-			cp -r static $$OUT_DIR/static; \
 			mkdir -p release; \
 			if [ "$$GOOS" = "windows" ]; then \
 				(cd bin && zip -r "../release/$$ARCHIVE_NAME.zip" "$$GOOS/$$GOARCH" >/dev/null) && \
