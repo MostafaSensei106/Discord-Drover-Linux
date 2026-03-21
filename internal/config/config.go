@@ -36,7 +36,7 @@ func Load(path string) (*Config, error) {
 	}
 
 	section := iniCfg.Section("bypass")
-	cfg.ProxyURL = section.Key("proxy_url").String()
+	cfg.ProxyURL = section.Key("proxy").String()
 	cfg.DirectMode = section.Key("direct_mode").MustBool(false)
 	cfg.DiscordPath = section.Key("discord_path").MustString(constants.DiscordPath)
 	cfg.UDPFragmentation = section.Key("udp_fragmentation").MustBool(true)

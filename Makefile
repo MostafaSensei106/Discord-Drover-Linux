@@ -13,7 +13,7 @@ GOARCH ?= $(shell go env GOARCH)
 APP_NAME := ddl
 OUTPUT_DIR := bin/$(GOOS)/$(GOARCH)
 OUTPUT := $(OUTPUT_DIR)/$(APP_NAME)
-GOWEBBASE_VERSION := 2.0.0
+GOWEBBASE_VERSION := 1.0.0
 
 .PHONY: all build clean release help check deps fmt vet
 
@@ -105,14 +105,14 @@ clean:
 
 help:
 	 @echo ""
-	 @echo "📖 GoWebBase Makefile Commands"
+	 @echo "📖 Discord Drover Makefile Commands"
 	 @echo "============================="
 	 @echo "make all           👉 Alias for 'make build'."
 	 @echo "make deps          👉 Check and download Go module dependencies."
 	 @echo "make fmt           👉 Format all Go source files."
 	 @echo "make vet           👉 Run 'go vet' to check for suspicious constructs."
 	 @echo "make check         👉 Run all checks (deps, fmt, vet)."
-	 @echo "make build         👉 Build the 'gowebbase' executable for the current OS/architecture."
+	 @echo "make build         👉 Build the 'Discord Drover' executable for the current OS/architecture."
 	 @echo "make install       👉 An alias for 'make build'. Does not install system-wide."
 	 @echo "make release       👉 Build and package for all target platforms (Linux, Windows)."
 	 @echo "make clean         👉 Delete all build artifacts, release archives, and Go caches."
