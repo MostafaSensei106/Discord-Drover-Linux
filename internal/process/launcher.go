@@ -96,15 +96,19 @@ func (l *Launcher) buildDiscordArgs() []string {
 	args := make([]string, 0)
 	args = append(args, l.discordArgs...)
 
-	if os.Getenv("WAYLAND_DISPLAY") != "" {
-		log.Printf("Detected Wayland (%s), running in Wayland mode", os.Getenv("WAYLAND_DISPLAY"))
+	xdgSession := os.Getenv("XDG_SESSION_TYPE")
+	waylandDisplay := os.Getenv("WAYLAND_DISPLAY")
+
+	if xdgSession == "wayland" || waylandDisplay != "" {
+		log.Printf("Detected Wayland (Session: %s, Display: %s), running in Wayland mode", xdgSession, waylandDisplay)
 		args = append(args,
+			"--ozone-platform-hint=auto",
 			"--enable-features=UseOzonePlatform,WaylandWindowDecorations",
 			"--ozone-platform=wayland",
 			"--enable-wayland-ime",
 		)
 	} else {
-		log.Printf("Detected X11 (%s), running in X11 mode", os.Getenv("DISPLAY"))
+		log.Printf("Detected X11 or fallback (Session: %s, DISPLAY: %s), running in X11 mode", xdgSession, os.Getenv("DISPLAY"))
 	}
 
 	return args
