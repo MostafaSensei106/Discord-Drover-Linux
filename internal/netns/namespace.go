@@ -103,7 +103,7 @@ func (n *NetworkNamespace) setupVethPair() error {
 		return fmt.Errorf("failed to move peer link into namespace: %w", err)
 	}
 
-	// Configure the namespace-side interface
+	// Configure the namespace-side interface (must lock OS thread for netns switch)
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
@@ -128,7 +128,6 @@ func (n *NetworkNamespace) setupVethPair() error {
 		return err
 	}
 
-	// Bring up loopback
 	lo, err := netlink.LinkByName("lo")
 	if err != nil {
 		return err
@@ -136,12 +135,13 @@ func (n *NetworkNamespace) setupVethPair() error {
 	return netlink.LinkSetUp(lo)
 }
 
-// setupRouting adds the default route inside the namespace and enables NAT on the host
+// setupRouting adds the default route inside the namespace and enables NAT on the host.
+// Caller must NOT hold LockOSThread — this function manages its own locking.
 func (n *NetworkNamespace) setupRouting() error {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	// Add default route inside the Discord namespace
+	// Switch into the Discord namespace to add the default route
 	if err := netns.Set(n.nsHandle); err != nil {
 		return err
 	}
@@ -154,30 +154,23 @@ func (n *NetworkNamespace) setupRouting() error {
 		return fmt.Errorf("failed to add default route: %w", err)
 	}
 
-	// Return to host namespace
+	// Return to host namespace before touching host-level settings
 	if err := netns.Set(n.hostNs); err != nil {
 		return err
 	}
 
-	// Enable IP forwarding so the host can route namespace traffic
 	if err := os.WriteFile("/proc/sys/net/ipv4/ip_forward", []byte("1"), 0644); err != nil {
 		return fmt.Errorf("failed to enable ip_forward: %w", err)
 	}
 
-	// Apply NAT so namespace traffic can reach the internet
+	// setupNAT runs inside this locked thread — do NOT lock again inside it
 	return n.setupNAT()
 }
 
-// setupNAT adds iptables MASQUERADE rules on the host
+// setupNAT adds iptables MASQUERADE rules on the host.
+// Must be called from a thread that already holds LockOSThread and is in the host namespace.
 func (n *NetworkNamespace) setupNAT() error {
-	// Make sure we are in the host namespace when reading routes
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	if err := netns.Set(n.hostNs); err != nil {
-		return fmt.Errorf("failed to switch to host namespace: %w", err)
-	}
-
+	// No LockOSThread here — we inherit the lock from setupRouting()
 	defaultIface, err := getDefaultInterface()
 	if err != nil {
 		return fmt.Errorf("failed to detect default network interface: %w", err)
@@ -247,7 +240,7 @@ func (n *NetworkNamespace) Cleanup() {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	// Switch to host namespace to read routes and run iptables correctly
+	// Make sure we are in the host namespace
 	netns.Set(n.hostNs)
 
 	defaultIface, _ := getDefaultInterface()

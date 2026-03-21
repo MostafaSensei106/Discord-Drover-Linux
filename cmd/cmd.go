@@ -95,7 +95,7 @@ func Execute() {
 	// 3. Apply iptables rules
 	fmt.Print("🔥 Applying iptables rules... ")
 	fw := firewall.New(proxyPort, cfg.NFQueueNum, constants.ToolNamespace)
-	if err := fw.Apply(); err != nil {
+	if err := fw.Apply(cfg.DirectMode); err != nil {
 		log.Fatalf("Failed: %v", err)
 	}
 	defer fw.Cleanup()
