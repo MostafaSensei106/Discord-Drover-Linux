@@ -1,10 +1,10 @@
-<h1 align="center">Discord Drover</h1>
+<h1 align="center">Discord Drover Linux</h1>
 <p align="center">
   <img src="https://socialify.git.ci/MostafaSensei106/Discord-Drover-Linux/image?custom_language=Go&font=KoHo&language=1&logo=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F138288138%3Fv%3D4&name=1&owner=1&pattern=Floating+Cogs&theme=Light" alt="Discord Drover Banner">
 </p>
 
 <p align="center">
-  <strong>A high-performance DPI bypass and network isolation tool for Discord on Linux.</strong><br>
+  <strong>A DPI bypass and network isolation tool for Discord on Linux.</strong><br>
   Fast. Secure. Stealthy. Voice and Video calls that just work.
 </p>
 
